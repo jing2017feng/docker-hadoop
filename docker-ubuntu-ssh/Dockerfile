@@ -1,9 +1,9 @@
 ############################################
 # version : ubuntu-ssh
-# desc : ubuntu14.04 上安装的ssh
+# desc : ubuntu18.10 上安装的ssh
 ############################################
-# 设置继承自ubuntu14.04官方镜像
-FROM ubuntu:14.04
+# 设置继承自ubuntu18.04官方镜像
+FROM ubuntu:18.10
  
 # 下面是一些创建者的基本信息
 MAINTAINER zhaominghui<342015908@qq.com>

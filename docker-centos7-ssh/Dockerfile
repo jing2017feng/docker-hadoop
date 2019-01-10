@@ -16,8 +16,15 @@ RUN echo "root   ALL=(ALL)       ALL" >> /etc/sudoers
 # 下面这两句比较特殊，在centos6上必须要有，否则创建出来的容器sshd不能登录
 RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
 RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
+RUN ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ""
+RUN ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ""
+
+USER root
+RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+RUN cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+RUN chmod 600 ~/.ssh/authorized_keys
 
 # 启动sshd服务并且暴露22端口
 RUN mkdir /var/run/sshd
-EXPOSE 22  
+EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

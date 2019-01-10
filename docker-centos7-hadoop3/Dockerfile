@@ -3,21 +3,21 @@
 # desc : ubuntu上安装的ssh，java, hadoop
 ############################################
 FROM ubuntu-ssh
- 
+
 # 下面是一些创建者的基本信息
 MAINTAINER zhaominghui<342015908qq.com>
- 
+
 #为hadoop集群提供dns服务
-RUN sudo apt-get -y install dnsmasq
- 
+RUN yum -y install bind bind-chroot
+
 #安装和配置java环境
 ADD http://mirrors.linuxeye.com/jdk/jdk-8u192-linux-x64.tar.gz /usr/local/ 
 RUN cd /usr/local && tar -zxvf jdk-8u192-linux-x64.tar.gz && rm -f jdk-8u192-linux-x64.tar.gz
- 
+
 ENV JAVA_HOME /usr/local/jdk1.8.0_192
 ENV CLASSPATH ${JAVA_HOME}/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 ENV PATH $PATH:${JAVA_HOME}/bin
- 
+
 #安装和配置 hadoop
 RUN groupadd hadoop
 RUN useradd -m hadoop -g hadoop
@@ -35,7 +35,7 @@ ENV HADOOP_HDFS_HOME /usr/local/hadoop
 ENV HADOOP_MAPRED_HOME /usr/local/hadoop
 ENV HADOOP_YARN_HOME /usr/local/hadoop
 ENV HADOOP_CONF_DIR /usr/local/hadoop/etc/hadoop
-ENV PATH ${HADOOP_HOME}/bin:$PATH
+ENV PATH ${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:$PATH
 
 ADD http://mirrors.tuna.tsinghua.edu.cn/apache/hbase/hbase-1.2.9/hbase-1.2.9-bin.tar.gz /usr/local/
 RUN cd /usr/local && tar -zxvf hbase-1.2.9-bin.tar.gz && rm -f hbase-1.2.9-bin.tar.gz
@@ -65,14 +65,11 @@ ADD hbase-site.xml $HBASE_HOME/conf/
 ADD regionservers $HBASE_HOME/conf/
 
 USER hadoop
-RUN sudo mkdir -p /opt/hadoop/data/zookeeper
 RUN sudo chown -R hadoop:hadoop $HADOOP_HOME/etc/hadoop
 RUN sudo chown -R hadoop:hadoop $HBASE_HOME/conf
 RUN sudo chown -R hadoop:hadoop /opt/hadoop
 RUN sudo chown -R hadoop:hadoop /home/hadoop
 
-COPY bootstrap.sh /home/hadoop/ 
-RUN chmod 766 /home/hadoop/bootstrap.sh 
-
-ENTRYPOINT ["/home/hadoop/bootstrap.sh"] 
-CMD ["/bin/bash"]
+COPY bootstrap.sh /home/hadoop/
+RUN chmod 766 /home/hadoop/bootstrap.sh
+RUN chmod 766 $HADOOP_HOME/etc/hadoop/*.sh
