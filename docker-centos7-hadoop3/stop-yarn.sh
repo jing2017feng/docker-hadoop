@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 YARN_RESOURCEMANAGER_USER=root
-HADOOP_SECURE_DN_USER=yarn
+HDFS_DATANODE_SECURE_USER=yarn
 YARN_NODEMANAGER_USER=root
 ## @description  usage info
 ## @audience     private

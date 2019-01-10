@@ -24,6 +24,7 @@ USER root
 RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
 RUN cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 RUN chmod 600 ~/.ssh/authorized_keys
+RUN echo "UserKnownHostsFile ~/.ssh/known_hosts">~/.ssh/config
 
 # 启动sshd服务并且暴露22端口
 RUN mkdir /var/run/sshd
