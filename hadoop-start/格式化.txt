@@ -1,0 +1,2 @@
+#主节点执行：
+hdfs namenode -fromat
