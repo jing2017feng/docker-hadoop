@@ -23,10 +23,8 @@ ENV PATH $PATH:${JAVA_HOME}/bin
 #ADD http://mirrors.shu.edu.cn/apache/hadoop/common/hadoop-3.0.3/hadoop-3.0.3.tar.gz  /usr/local/
 COPY hadoop-3.0.3.tar.gz /usr/local/
 RUN cd /usr/local && tar -zxvf hadoop-3.0.3.tar.gz && rm -f hadoop-3.0.3.tar.gz
-RUN chown -R hadoop:hadoop /usr/local/hadoop-3.0.3
 RUN cd /usr/local && ln -s ./hadoop-3.0.3 hadoop
  
-ENV HADOOP_PREFIX /usr/local/hadoop
 ENV HADOOP_HOME /usr/local/hadoop
 ENV HADOOP_COMMON_HOME /usr/local/hadoop
 ENV HADOOP_HDFS_HOME /usr/local/hadoop
@@ -38,7 +36,6 @@ ENV PATH ${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:$PATH
 #ADD http://mirrors.tuna.tsinghua.edu.cn/apache/hbase/hbase-1.2.9/hbase-1.2.9-bin.tar.gz /usr/local/
 COPY hbase-1.2.9-bin.tar.gz /usr/local/
 RUN cd /usr/local && tar -zxvf hbase-1.2.9-bin.tar.gz && rm -f hbase-1.2.9-bin.tar.gz
-RUN chown -R hadoop:hadoop /usr/local/hbase-1.2.9
 RUN cd /usr/local && ln -s ./hbase-1.2.9 hbase
 
 ENV HBASE_HOME /usr/local/hbase
@@ -49,7 +46,7 @@ ADD core-site.xml $HADOOP_HOME/etc/hadoop/
 ADD hdfs-site.xml $HADOOP_HOME/etc/hadoop/ 
 ADD mapred-site.xml $HADOOP_HOME/etc/hadoop/ 
 ADD yarn-site.xml $HADOOP_HOME/etc/hadoop/
-
+ADD workers $HADOOP_HOME/etc/hadoop/
 ADD start-dfs.sh $HADOOP_HOME/sbin/
 ADD start-yarn.sh $HADOOP_HOME/sbin/
 ADD stop-dfs.sh $HADOOP_HOME/sbin/
