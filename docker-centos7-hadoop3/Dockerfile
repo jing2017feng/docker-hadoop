@@ -20,10 +20,6 @@ ENV CLASSPATH ${JAVA_HOME}/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 ENV PATH $PATH:${JAVA_HOME}/bin
 
 #安装和配置 hadoop
-RUN groupadd hadoop
-RUN useradd -m hadoop -g hadoop
-RUN echo "hadoop:hadoop" | chpasswd
- 
 #ADD http://mirrors.shu.edu.cn/apache/hadoop/common/hadoop-3.0.3/hadoop-3.0.3.tar.gz  /usr/local/
 COPY hadoop-3.0.3.tar.gz /usr/local/
 RUN cd /usr/local && tar -zxvf hadoop-3.0.3.tar.gz && rm -f hadoop-3.0.3.tar.gz
@@ -48,25 +44,18 @@ RUN cd /usr/local && ln -s ./hbase-1.2.9 hbase
 ENV HBASE_HOME /usr/local/hbase
 ENV PATH ${HBASE_HOME}/bin:$PATH
 
-RUN echo "hadoop ALL= NOPASSWD: ALL" >> /etc/sudoers
-
-#免密ssh
-USER hadoop
-RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
-RUN cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-
 ADD hadoop-env.sh $HADOOP_HOME/etc/hadoop/ 
 ADD core-site.xml $HADOOP_HOME/etc/hadoop/ 
 ADD hdfs-site.xml $HADOOP_HOME/etc/hadoop/ 
 ADD mapred-site.xml $HADOOP_HOME/etc/hadoop/ 
-ADD yarn-site.xml $HADOOP_HOME/etc/hadoop/ 
+ADD yarn-site.xml $HADOOP_HOME/etc/hadoop/
+
+ADD start-dfs.sh $HADOOP_HOME/sbin/
+ADD start-yarn.sh $HADOOP_HOME/sbin/
+ADD stop-dfs.sh $HADOOP_HOME/sbin/
+ADD stop-yarn.sh $HADOOP_HOME/sbin/
+RUN chmod +x $HADOOP_HOME/sbin/*.sh
 
 ADD hbase-env.sh $HBASE_HOME/conf/
 ADD hbase-site.xml $HBASE_HOME/conf/
 ADD regionservers $HBASE_HOME/conf/
-
-USER hadoop
-RUN sudo chown -R hadoop:hadoop $HADOOP_HOME/etc/hadoop
-RUN sudo chown -R hadoop:hadoop $HBASE_HOME/conf
-RUN sudo chown -R hadoop:hadoop /home/hadoop
-
